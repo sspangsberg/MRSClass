@@ -51,6 +51,9 @@ public class MovieDAO_DB implements IMovieDataAccess {
 
     public Movie createMovie(String title, int year) throws Exception {
 
+        // Dynamic SQL
+
+
         String sql = "INSERT INTO Movie (Title,Year) VALUES (?,?);";
 
         try (Connection conn = databaseConnector.getConnection()) {
@@ -84,8 +87,29 @@ public class MovieDAO_DB implements IMovieDataAccess {
     }
 
     public void updateMovie(Movie movie) throws Exception {
-        //TODO Do this
-        throw new UnsupportedOperationException();
+
+        try (Connection conn = databaseConnector.getConnection()) {
+
+            String sql = "UPDATE Movie SET Title = ?, Year = ? WHERE Id = ?";
+
+            PreparedStatement stmt = conn.prepareStatement(sql);
+
+            // Bind parameters
+            stmt.setString(1, movie.getTitle());
+            stmt.setInt(2, movie.getYear());
+            stmt.setInt(3, movie.getId());
+
+            stmt.executeUpdate();
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new Exception("Could not update movie", ex);
+        }
+
+
+        // UPDATE Movie SET Title = 'Terminator 1', Year = 1990
+        //WHERE Id = 1
+
     }
 
     public void deleteMovie(Movie movie) throws Exception {

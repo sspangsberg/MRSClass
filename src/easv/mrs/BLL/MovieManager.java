@@ -33,4 +33,7 @@ public class MovieManager {
         return movieDAO.createMovie(title, year);
     }
 
+    public void updateMovie(Movie updatedMovie) throws Exception {
+        movieDAO.updateMovie(updatedMovie);
+    }
 }
