@@ -1,26 +1,35 @@
 package easv.mrs.GUI.Controller;
 
 import easv.mrs.BE.Movie;
+import easv.mrs.GUI.Main;
 import easv.mrs.GUI.Model.MovieModel;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class MovieViewController implements Initializable {
+public class MovieViewController extends BaseController implements Initializable {
 
 
     public TextField txtMovieSearch;
     public ListView<Movie> lstMovies;
-    public Button btnUpdate;
+    public Button btnEdit;
 
     @FXML
     private TextField txtTitle;
@@ -33,7 +42,7 @@ public class MovieViewController implements Initializable {
     public MovieViewController()  {
 
         try {
-            movieModel = new MovieModel();
+            //movieModel = new MovieModel();
         } catch (Exception e) {
             displayError(e);
             //e.printStackTrace();
@@ -44,7 +53,14 @@ public class MovieViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
-        btnUpdate.setDisable(true);
+    }
+
+    @Override
+    public void setup() {
+
+        movieModel = getModel().getMovieModel();
+
+        btnEdit.setDisable(true);
 
         lstMovies.setItems(movieModel.getObservableMovies());
 
@@ -63,18 +79,17 @@ public class MovieViewController implements Initializable {
             public void changed(ObservableValue<? extends Movie> observable, Movie oldValue, Movie newValue) {
 
                 if (newValue != null) {
-                    btnUpdate.setDisable(false);
+                    btnEdit.setDisable(false);
                     txtTitle.setText(newValue.getTitle());
                     txtYear.setText(String.valueOf(newValue.getYear()));
                 }
                 else
-                    btnUpdate.setDisable(true);
+                    btnEdit.setDisable(true);
             }
         });
-
-
-
     }
+
+
 
     private void displayError(Throwable t)
     {
@@ -97,20 +112,34 @@ public class MovieViewController implements Initializable {
         }
     }
 
-    public void handleUpdate(ActionEvent actionEvent) {
-        System.out.println("Update btn clicked");
+    public void handleEdit(ActionEvent actionEvent) throws IOException {
 
-        try {
+        Movie selectedMovie = lstMovies.getSelectionModel().getSelectedItem();
+        movieModel.setSelectedMovie(selectedMovie);
 
-            Movie updatedMovie = lstMovies.getSelectionModel().getSelectedItem();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/easv/mrs/GUI/View/MovieDetailsView.fxml"));
+        AnchorPane pane = (AnchorPane) loader.load();
 
-            updatedMovie.setTitle(txtTitle.getText());
-            updatedMovie.setYear(Integer.parseInt(txtYear.getText()));
+        MovieDetailsViewController controller = loader.getController();
+        controller.setModel(super.getModel());
+        controller.setup();
 
-            movieModel.updateMovie(updatedMovie);
-        } catch (Exception e) {
-            displayError(e);
-            //throw new RuntimeException();
-        }
+        // Create the dialog Stage.
+        Stage dialogWindow = new Stage();
+        dialogWindow.setTitle("Edit Movie");
+        dialogWindow.initModality(Modality.WINDOW_MODAL);
+        dialogWindow.initOwner(((Node)actionEvent.getSource()).getScene().getWindow());
+        Scene scene = new Scene(pane);
+        dialogWindow.setScene(scene);
+
+
+        // Show the dialog and wait until the user closes it
+        dialogWindow.showAndWait();
+/*
+
+
+
+        */
     }
 }

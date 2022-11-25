@@ -16,6 +16,7 @@ public class MovieModel {
 
     private ObservableList<Movie> moviesToBeViewed;
     private MovieManager movieManager;
+    private Movie selectedMovie;
 
     /**
      * Constructor
@@ -54,5 +55,13 @@ public class MovieModel {
         // update ListView
         moviesToBeViewed.clear();
         moviesToBeViewed.addAll(movieManager.getAllMovies());
+    }
+
+    public Movie getSelectedMovie() {
+        return selectedMovie;
+    }
+
+    public void setSelectedMovie(Movie selectedMovie) {
+        this.selectedMovie = selectedMovie;
     }
 }
