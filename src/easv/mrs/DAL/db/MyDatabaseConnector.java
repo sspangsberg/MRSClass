@@ -4,42 +4,37 @@ package easv.mrs.DAL.db;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.Properties;
 
 public class MyDatabaseConnector {
+    private static final String PROP_FILE = "data/database.settings";
+    private SQLServerDataSource ds;
+
+    public MyDatabaseConnector() throws IOException {
 
 
-    //Class will easv.mrs.be included when we start working on DATABASES
+        Properties databaseProperties = new Properties();
+        databaseProperties.load(new FileInputStream(new File(PROP_FILE)));
 
-    private SQLServerDataSource dataSource;
+        String server = databaseProperties.getProperty("Server");
+        String database = databaseProperties.getProperty("Database");
+        String user = databaseProperties.getProperty("User");
+        String password = databaseProperties.getProperty("Password");
 
-    public MyDatabaseConnector()
-    {
-        dataSource = new SQLServerDataSource();
-        dataSource.setServerName("10.176.111.31");
-        dataSource.setDatabaseName("SMSJ_MRS2022");
-        dataSource.setUser("CSe22A_40");
-        dataSource.setPassword("CSe22A_40");
-        dataSource.setTrustServerCertificate(true);
-        //dataSource.setPortNumber(1433);
+        ds = new SQLServerDataSource();
+        ds.setServerName(server);
+        ds.setDatabaseName(database);
+        ds.setUser(user);
+        ds.setPassword(password);
+        ds.setTrustServerCertificate(true);
     }
 
     public Connection getConnection() throws SQLServerException {
-        return dataSource.getConnection();
+        return ds.getConnection();
     }
-
-
-    public static void main(String[] args) throws SQLException {
-
-        MyDatabaseConnector databaseConnector = new MyDatabaseConnector();
-
-        try (Connection connection = databaseConnector.getConnection()) {
-
-            System.out.println("Is it open? " + !connection.isClosed());
-
-        } //Connection gets closed here
-    }
-
 
 }

@@ -133,9 +133,8 @@ public class MovieViewController extends BaseController implements Initializable
         Scene scene = new Scene(pane);
         dialogWindow.setScene(scene);
 
-
         // Show the dialog and wait until the user closes it
-        dialogWindow.showAndWait();
+        dialogWindow.show();
 /*
 
 

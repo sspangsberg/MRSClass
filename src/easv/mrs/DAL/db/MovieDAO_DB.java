@@ -4,6 +4,7 @@ import easv.mrs.BE.Movie;
 import easv.mrs.DAL.IMovieDataAccess;
 
 import javax.swing.plaf.nimbus.State;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class MovieDAO_DB implements IMovieDataAccess {
 
     private MyDatabaseConnector databaseConnector;
 
-    public MovieDAO_DB() {
+    public MovieDAO_DB() throws IOException {
         databaseConnector = new MyDatabaseConnector();
     }
 
